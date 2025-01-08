@@ -1,0 +1,86 @@
+# Archivos de compilación y dependencias (Frontend - Vue.js)
+node_modules/
+dist/
+
+# Archivos de compilación y dependencias (Backend - Java/Spring)
+target/
+.mvn/
+*.war
+*.jar
+*.class
+
+# Archivos de IDEs (Importante adaptar a tu IDE)
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+
+# Archivos de sistema operativo
+.DS_Store
+Thumbs.db
+ehthumbs.db
+*.swp
+*.swo
+.cache
+
+# Archivos de logs
+*.log
+*.out
+
+# Archivos de configuración locales (Ejemplo - ¡MUY IMPORTANTE!)
+application-local.properties
+application-dev.properties
+*.env # Archivos de variables de entorno
+
+# Archivos temporales
+*.tmp
+*.bak
+*~
+
+# Archivos de depuración
+*.orig
+*.pyc
+__pycache__/
+
+# Carpetas de caché de dependencias
+.gradle/
+.m2/
+
+# Archivos generados por herramientas de build
+/build
+/out
+/generated
+
+# Archivos de paquetes comprimidos
+*.zip
+*.rar
+*.tar.gz
+*.7z
+
+# Archivos de bases de datos locales (Si aplicable)
+*.sqlite
+*.db
+
+# Archivos de contraseñas u otra información sensible (¡NUNCA SUBIR ESTO!)
+*.key
+*.pem
+id_rsa
+id_rsa.pub
+
+# Archivos de desarrollo específicos de Vue.js
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnp*
+
+# Ignorar archivos de configuración de Docker si los usas para desarrollo local
+docker-compose.override.yml
+.dockerenv
