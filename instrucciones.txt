@@ -1,0 +1,32 @@
+Backend con SPRING + Java (versiones a elección)
+Prueba:
+Servicio Rest - 4 servicios REST JAVA. 
+
+Tecnología
+Backend con SPRING + Java (versiones a elección)
+
+Servicios 
+(rest o graphQL)
+
+Autenticación (simple)
+CRUD Alumno (nombre, edad, género, curso asignado)
+CRUD Curso (nombre, cupo máximo, alumnos )
+Get Cursos 
+Respuesta general: total cursos, total alumnos, promedio de alumnos por género/curso, promedio de capacidad de cursos (que tan llenos estan)
+Respuesta en array
+listados cursos, mostrar cantidad de alumnos por curso
+cantidad de alumnos por género
+Total alumnos por género por curso
+Mostrar cupo (porcentaje de capacidad de cada curso
+*Bonus despliegue en ambiente público
+
+Frontend (VueJS3 o Angular >17)
+Consumir el backend desarrollado.
+Implementar una gráfica (librería y tipo a elección, por ejemplo, D3 LineGraph) para visualizar los datos de manera interactiva y clara. ç
+El criterio de que y como mostrar la data es del aplicante 
+
+
+Defensa
+La defensa se realizará por pantalla compartida. El proceso incluye:
+Demostración de la funcionalidad de los servicios.
+Revisión de código.

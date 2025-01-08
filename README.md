@@ -97,16 +97,6 @@ Este repositorio contiene la implementación de la prueba técnica que incluye u
 
 4. La aplicación frontend estará disponible en `http://localhost:3000`.
 
-
-## Despliegue en ambiente público (Bonus)
-
-1. **Backend**:
-   - Despliega en un servicio como AWS, Heroku, Railway o cualquier servidor de tu elección.
-2. **Frontend**:
-   - Despliega en Netlify, Vercel o cualquier hosting de tu elección.
-3. Proporciona las URLs públicas para evaluación.
-
-
 ## Contacto
 
 **Nombre**: Sergio Laguna  
