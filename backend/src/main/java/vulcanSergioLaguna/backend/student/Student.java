@@ -6,7 +6,7 @@ public record Student(
         Integer id,
         String name,
         Integer age,
-        String sex,
-        Classroom assignedClassroom
+        String sex
+//        Classroom assignedClassroom
 ) {
 }

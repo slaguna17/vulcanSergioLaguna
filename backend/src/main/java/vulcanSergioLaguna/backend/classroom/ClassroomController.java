@@ -1,12 +1,15 @@
 package vulcanSergioLaguna.backend.classroom;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 
+@RestController
 public class ClassroomController {
 
 //    CRUD Curso (nombre, cupo máximo, alumnos )
@@ -19,31 +22,47 @@ public class ClassroomController {
 //    Mostrar cupo (porcentaje de capacidad de cada curso
 //    *Bonus despliegue en ambiente público
 
-    @GetMapping("/getAllClassrooms")
-    public void getAllClassrooms(){
-        LinkedList<Classroom> classroomList = new LinkedList<Classroom>();
+    //Declare Repository and Constructor
+    private final ClassroomRepository classroomRepository;
+
+    public ClassroomController(ClassroomRepository classroomRepository){
+        this.classroomRepository = classroomRepository;
     }
 
-    private int classroomID = 0;
-    @GetMapping("/classroom")
-    public void getClassroomByID(int id){
-
+    //Get all Classrooms
+    @GetMapping("/api/classrooms")
+    List<Classroom> findAllClassrooms(){
+        return classroomRepository.findAllClassrooms();
     }
 
-    @PostMapping("/createClassroom")
-    public void createClassroom(){
-
+    //Get a Classroom by ID
+    @GetMapping("/api/classrooms/{id}")
+    Classroom findClassroomById(@PathVariable Integer id){
+        Optional<Classroom> classroom = classroomRepository.findClassroomById(id);
+        if (classroom.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        return classroom.get();
     }
 
-    //Update
-    @PostMapping("/updateClassroom")
-    public void updateClassroom(int id){
-
+    //Create a Classroom (POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/api/createClassroom")
+    void createClassroom(@RequestBody Classroom classroom){
+        classroomRepository.createClassroom(classroom);
     }
 
-    //Delete
-    @DeleteMapping("/deleteClassroom")
-    public void deleteClassroom(int id){
+    //Update a Classroom (PUT)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PutMapping("/api/updateClassroom/{id}")
+    void updateClassroom(@RequestBody Classroom classroom, @PathVariable Integer id){
+        classroomRepository.updateClassroom(classroom,id);
+    }
 
+    //Delete a Run (DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/api/deleteClassroom/{id}")
+    void deleteClassroom(@PathVariable Integer id){
+        classroomRepository.deleteClassroom(id);
     }
 }
