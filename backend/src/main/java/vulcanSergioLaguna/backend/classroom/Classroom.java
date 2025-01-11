@@ -1,13 +1,16 @@
 package vulcanSergioLaguna.backend.classroom;
 
-import vulcanSergioLaguna.backend.student.Student;
-
-import java.util.List;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Positive;
 
 public record Classroom(
+        @Positive
         Integer id,
+        @NotEmpty
         String name,
-        Integer maxCapacity,
-        List<Student> studentsAssigned
+        @Positive
+        Integer maxCapacity
 ) {
 }

@@ -3,10 +3,7 @@ package vulcanSergioLaguna.backend.student;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import vulcanSergioLaguna.backend.classroom.Classroom;
-import vulcanSergioLaguna.backend.classroom.ClassroomRepository;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 

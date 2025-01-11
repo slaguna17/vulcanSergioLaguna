@@ -1,77 +1,62 @@
 package vulcanSergioLaguna.backend.classroom;
 
-import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
-import vulcanSergioLaguna.backend.student.Student;
-
+import org.springframework.util.Assert;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public class ClassroomRepository {
+    //In memory repository
     private List<Classroom> classrooms = new ArrayList<>();
+
+    //JDBC
+    private static final Logger log = LoggerFactory.getLogger(vulcanSergioLaguna.backend.classroom.ClassroomRepository.class);
+    private final JdbcClient jdbcClient;
+
+    public ClassroomRepository(JdbcClient jdbcClient) {
+        this.jdbcClient = jdbcClient;
+    }
 
     //Get all Classrooms
     List<Classroom> findAllClassrooms(){
-        return classrooms;
+        return jdbcClient.sql("select * from classroom").query(Classroom.class).list();
     }
 
     //Get Classroom by ID
     Optional<Classroom> findClassroomById(Integer id){
-        return classrooms.stream()
-                .filter(classroom -> classroom.id() == id)
-                .findFirst();
+        return jdbcClient.sql("SELECT id, name, maxCapacity FROM Classroom WHERE id = :id")
+                .param("id",id)
+                .query(Classroom.class)
+                .optional();
     }
 
     //Create Classroom
     void createClassroom(Classroom classroom){
-        classrooms.add(classroom);
+        var updated = jdbcClient.sql("INSERT INTO Classroom(id, name, maxCapacity) VALUES (?,?,?)")
+                .params(List.of(classroom.id(),classroom.name(),classroom.maxCapacity()))
+                .update();
+        Assert.state(updated == 1, "Failed to create classroom " + classroom.name());
     }
 
     //Update Classroom
     void updateClassroom(Classroom classroom, Integer id){
-        Optional<Classroom> existingClassroom = findClassroomById(id);
-        if (existingClassroom.isPresent()){
-            classrooms.set(classrooms.indexOf(existingClassroom.get()),classroom);
-        }
+        var updated = jdbcClient.sql("update Classroom set name = ?, maxCapacity = ? where id = ?")
+                .params(List.of(classroom.name(),classroom.maxCapacity(),id))
+                .update();
+        Assert.state(updated == 1, "Failed to update classroom " + classroom.name());
     }
 
     //Delete Classroom
     void deleteClassroom(Integer id){
-        classrooms.removeIf(classroom -> classroom.id().equals(id));
+        var updated = jdbcClient.sql("delete from Classroom where id = :id")
+                .param("id",id)
+                .update();
+        Assert.state(updated == 1, "Failed to delete classroom " + id);
     }
-
-    @PostConstruct
-    private void init (){
-
-        List<Student> students = new ArrayList<>();
-
-        students.add(new Student(
-                1,
-                "Sergio",
-                25,
-                "Masculino"
-        ));
-        students.add(new Student(
-                2,
-                "Andrea",
-                24,
-                "Femenino"
-        ));
-
-        classrooms.add(new Classroom(
-                1,
-                "Historia",
-                20,
-                students
-        ));
-        classrooms.add(new Classroom(
-                2,
-                "Religion",
-                40,
-                students
-        ));
-    }
-
 }
+
