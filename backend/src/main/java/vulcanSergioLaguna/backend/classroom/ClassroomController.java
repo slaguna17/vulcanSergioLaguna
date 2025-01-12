@@ -3,6 +3,7 @@ package vulcanSergioLaguna.backend.classroom;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import vulcanSergioLaguna.backend.student.Student;
 
 
 import java.util.LinkedList;
@@ -11,16 +12,6 @@ import java.util.Optional;
 
 @RestController
 public class ClassroomController {
-
-//    CRUD Curso (nombre, cupo máximo, alumnos )
-//    Get Cursos
-//    Respuesta general: total cursos, total alumnos, promedio de alumnos por género/curso, promedio de capacidad de cursos (que tan llenos estan)
-//    Respuesta en array
-//    listados cursos, mostrar cantidad de alumnos por curso
-//    cantidad de alumnos por género
-//    Total alumnos por género por curso
-//    Mostrar cupo (porcentaje de capacidad de cada curso
-//    *Bonus despliegue en ambiente público
 
     //Declare Repository and Constructor
     private final ClassroomRepository classroomRepository;
@@ -65,4 +56,13 @@ public class ClassroomController {
     void deleteClassroom(@PathVariable Integer id){
         classroomRepository.deleteClassroom(id);
     }
+
+    //Get Free space by Classroom
+    @GetMapping("/api/classroom/{classroomId}/occupancy")
+    String getPercentOccupiedInClassroom(@PathVariable Integer classroomId){
+        Double occupancy = classroomRepository.getPercentageOccupiedByClassroom(classroomId);
+        String message = "El curso esta lleno al " + occupancy +"%";
+        return message;
+    }
+
 }

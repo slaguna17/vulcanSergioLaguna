@@ -52,4 +52,19 @@ public class StudentController {
     void deleteStudent(@PathVariable Integer id){
         studentRepository.deleteStudent(id);
     }
+
+    //Get Students by Classroom
+    @GetMapping("/api/classroom/{classroomId}/students")
+    List<Student> getStudentsByClassroom(@PathVariable Integer classroomId){
+        return studentRepository.getStudentsByClassroom(classroomId);
+    }
+
+    //Get Students Average by Sex by Classroom
+    @GetMapping("/api/classroom/{classroomId}/averageStudentPerSex")
+    String getAverageSexByClassroom(@PathVariable Integer classroomId){
+        Double average = studentRepository.getAverageStudentPerSex(classroomId);
+        String message = "El promedio por genero es de: " + average;
+        return message;
+    }
+
 }

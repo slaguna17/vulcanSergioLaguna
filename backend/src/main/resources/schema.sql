@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS Student (
 CREATE TABLE IF NOT EXISTS Classroom (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-    maxCapacity INT NOT NULL
+    max_capacity INT NOT NULL
 );
 
 -- Crear tabla intermedia para la relación muchos a muchos
