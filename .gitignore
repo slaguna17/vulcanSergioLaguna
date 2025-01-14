@@ -1,6 +1,7 @@
 # Archivos de compilación y dependencias (Frontend - Vue.js)
 node_modules/
 dist/
+backend/src/main/resources/application.properties
 
 # Archivos de compilación y dependencias (Backend - Java/Spring)
 target/

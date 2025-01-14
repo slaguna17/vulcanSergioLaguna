@@ -13,7 +13,7 @@ import java.util.Set;
 @Table(name = "student")
 public class Student {
         @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
+//        @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Integer id;
         @NotEmpty
         private String name;

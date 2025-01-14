@@ -1,6 +1,8 @@
 package vulcanSergioLaguna.backend.student;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -61,10 +63,16 @@ public class StudentController {
 
     //Get Students Average by Sex by Classroom
     @GetMapping("/api/classroom/{classroomId}/averageStudentPerSex")
-    String getAverageSexByClassroom(@PathVariable Integer classroomId){
-        Double average = studentRepository.getAverageStudentPerSex(classroomId);
-        String message = "El promedio por genero es de: " + average;
-        return message;
+    String getSexPercentageByClassroom(@PathVariable Integer classroomId){
+        String percentage = studentRepository.getSexPercentageByClassroom(classroomId);
+        String message = "El promedio por genero es de: " + percentage;
+        return percentage;
+    }
+
+    //Get Students by Sex
+    @GetMapping("/api/students/sex/{sex}")
+    List<Student> getStudentsBySex(@PathVariable String sex){
+        return studentRepository.getStudentsBySex(sex);
     }
 
 }

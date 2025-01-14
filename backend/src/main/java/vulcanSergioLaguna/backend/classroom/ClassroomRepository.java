@@ -2,6 +2,7 @@ package vulcanSergioLaguna.backend.classroom;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
@@ -39,8 +40,8 @@ public class ClassroomRepository {
 
     //Create Classroom
     public void createClassroom(Classroom classroom){
-        var updated = jdbcClient.sql("INSERT INTO Classroom(id, name, max_capacity) VALUES (?,?,?)")
-                .params(List.of(classroom.getId(),classroom.getName(),classroom.getMax_capacity()))
+        var updated = jdbcClient.sql("INSERT INTO Classroom(name, max_capacity) VALUES (?,?)")
+                .params(List.of(classroom.getName(),classroom.getMax_capacity()))
                 .update();
         Assert.state(updated == 1, "Failed to create classroom " + classroom.getName());
     }
@@ -60,33 +61,54 @@ public class ClassroomRepository {
                 .update();
         Assert.state(updated == 1, "Failed to delete classroom " + id);
     }
+    // Mapeo de ResultSet a objetos Student
+    private RowMapper<Classroom> classroomRowMapper() {
+        return (rs, rowNum) -> new Classroom(
+                rs.getInt("id"),
+                rs.getString("name"),
+                rs.getInt("max_capacity")
+        );
+    }
+
+    // Método para obtener las aulas asignadas a un estudiante
+    public List<Classroom> getClassroomsByStudent(Integer studentId) {
+        String query = """
+                SELECT c.id, c.name, c.max_capacity
+                FROM classroom c
+                JOIN student_classroom sc ON c.id = sc.classroom_id
+                WHERE sc.student_id = :studentId
+                """;
+        List<Classroom> classrooms = new ArrayList<>();
+
+        return jdbcClient.sql(query)
+                .param("studentId", studentId)
+                .query(classroomRowMapper())
+                .list();
+    }
 
     //Occupied percentage by Classroom
     public Double getPercentageOccupiedByClassroom(Integer classroomId){
-        // Get the max capacity of the classroom
-        Integer maxCapacity = jdbcClient.sql("SELECT max_capacity FROM classroom WHERE id = :classroomId")
+        String query = "SELECT c.max_capacity, COUNT(sc.student_id) AS student_count " +
+                "FROM classroom c " +
+                "LEFT JOIN student_classroom sc ON c.id = sc.classroom_id " +
+                "WHERE c.id = :classroomId " +
+                "GROUP BY c.max_capacity";
+
+        return jdbcClient.sql(query)
                 .param("classroomId", classroomId)
-                .query((rs, rowNum) -> rs.getInt("max_capacity"))
+                .query((rs, rowNum) -> {
+                    Integer maxCapacity = rs.getInt("max_capacity");
+                    Integer studentCount = rs.getInt("student_count");
+
+                    if (maxCapacity == 0) {
+                        return 0.0; // Avoid division by zero
+                    }
+
+                    return ((double) studentCount / maxCapacity) * 100;
+                })
                 .stream()
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Classroom not found"));
-
-
-        // Get the number of students in the classroom
-        Integer studentCount = jdbcClient.sql("SELECT COUNT(*) AS count FROM student_classroom WHERE classroom_id = :classroomId")
-                .param("classroomId", classroomId)
-                .query((rs, rowNum) -> rs.getInt("count"))
-                .stream()
-                .findFirst()
-                .orElse(0); // Default to 0 if no students are found
-
-        // Calculate the occupancy percentage
-        if (maxCapacity == 0) {
-            return 0.0; // Avoid division by zero
-        }
-
-        double occupancyPercentage = ((double) studentCount / maxCapacity) * 100;
-        return occupancyPercentage;
     }
 
 }

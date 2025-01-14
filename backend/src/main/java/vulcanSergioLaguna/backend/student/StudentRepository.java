@@ -6,9 +6,12 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
-import java.util.List;
-import java.util.Optional;
+import vulcanSergioLaguna.backend.classroom.Classroom;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public class StudentRepository {
@@ -34,11 +37,11 @@ public class StudentRepository {
     }
 
     //Create Student
-    public void createStudent(Student student){
-        var updated = jdbcClient.sql("INSERT INTO Student(id,name, age, sex) VALUES (?,?,?,?)")
-                .params(List.of(student.getId(),student.getName(),student.getAge(),student.getSex()))
+    public void createStudent(Student student) {
+        var updated = jdbcClient.sql("INSERT INTO Student (name, age, sex) VALUES (?, ?, ?)")
+                .params(List.of(student.getName(),student.getAge(),student.getSex()))
                 .update();
-        Assert.state(updated == 1, "Failed to create student " + student.getName());
+        Assert.state(updated == 1, "Failed to update student " + student.getName());
     }
 
     //Update Student
@@ -91,28 +94,45 @@ public class StudentRepository {
     }
 
     //Promedio de alumnos por genero en un curso
-    public Double getAverageStudentPerSex(Integer classroomId){
-        String query = """
-                SELECT\s
-                    AVG(sex_count) AS average_students_per_sex
-                FROM (
-                    SELECT\s
-                        s.sex,
-                        COUNT(s.id) AS sex_count
-                    FROM\s
-                        student s
-                    INNER JOIN\s
-                        student_classroom sc ON s.id = sc.student_id
-                    WHERE\s
-                        sc.classroom_id = ?
-                    GROUP BY\s
-                        s.sex
-                ) subquery;
-                """;
+    public String getSexPercentageByClassroom(Integer classroomId) {
+        String query = "SELECT " +
+                "SUM(CASE WHEN sex = 'Masculino' THEN 1 ELSE 0 END) AS male_count, " +
+                "SUM(CASE WHEN sex = 'Femenino' THEN 1 ELSE 0 END) AS female_count, " +
+                "COUNT(*) AS total_count " +
+                "FROM student_classroom sc " +
+                "JOIN student s ON sc.student_id = s.id " +
+                "WHERE sc.classroom_id = :classroomId";
 
         return jdbcClient.sql(query)
-                .param(1, classroomId)
-                .query((rs, rowNum) -> rs.getDouble("average_students_per_sex"))
-                .single();
+                .param("classroomId", classroomId)
+                .query((rs, rowNum) -> {
+                    int maleCount = rs.getInt("male_count");
+                    int femaleCount = rs.getInt("female_count");
+                    int totalCount = rs.getInt("total_count");
+
+                    double malePercentage = totalCount > 0 ? ((double) maleCount / totalCount) * 100 : 0;
+                    double femalePercentage = totalCount > 0 ? ((double) femaleCount / totalCount) * 100 : 0;
+
+                    return String.format("Hombres: %.2f%%, Mujeres: %.2f%%",
+                            malePercentage, femalePercentage);
+                })
+                .stream()
+                .findFirst()
+                .orElse("Curso no encontrado o sin estudiantes.");
     }
+
+    //Numero de alumnos por genero
+    public List<Student> getStudentsBySex(String sex){
+        String query = """
+            SELECT *
+            FROM Student
+            WHERE sex = :sex;
+            """;
+
+        return jdbcClient.sql(query)
+                .param("sex", sex)
+                .query(Student.class)
+                .list();
+    }
+
 }

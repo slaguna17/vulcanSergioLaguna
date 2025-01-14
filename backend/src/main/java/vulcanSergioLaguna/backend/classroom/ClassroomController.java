@@ -5,8 +5,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import vulcanSergioLaguna.backend.student.Student;
 
-
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,12 +55,18 @@ public class ClassroomController {
         classroomRepository.deleteClassroom(id);
     }
 
-    //Get Free space by Classroom
+    //Get Occupancy by Classroom
     @GetMapping("/api/classroom/{classroomId}/occupancy")
-    String getPercentOccupiedInClassroom(@PathVariable Integer classroomId){
+    Double getPercentOccupiedInClassroom(@PathVariable Integer classroomId){
         Double occupancy = classroomRepository.getPercentageOccupiedByClassroom(classroomId);
         String message = "El curso esta lleno al " + occupancy +"%";
-        return message;
+        return occupancy;
+    }
+
+    //Get Classrooms by Student Id
+    @GetMapping("/api/students/{studentId}/classrooms")
+    List<Classroom> getClassroomsByStudent(@PathVariable Integer studentId){
+        return classroomRepository.getClassroomsByStudent(studentId);
     }
 
 }

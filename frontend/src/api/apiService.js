@@ -1,48 +1,76 @@
 import axios from 'axios';
+import axiosClient from './axiosClient';
 
 export default {
-
   //Students CRUD
   findAllStudents() {
-    return axios.get('http://localhost:8080/api/students'); // Ajusta la URL según tu backend
+    return axiosClient.get('http://localhost:8080/api/students'); 
   },
 
   findStudentById(id){
-    return axios.get('http://localhost:8080/api/students/${id}')
+    return axiosClient.get(`http://localhost:8080/api/students/${id}`)
   },
 
   createStudent(student) {
-    return axios.post('http://localhost:8080/api/createStudent', student);
+    return axiosClient.post('http://localhost:8080/api/createStudent', student);
   },
 
   updateStudent(id, student) {
-    return axios.put(`http://localhost:8080/api/updateStudent/${id}`, student);
+    return axiosClient.put(`http://localhost:8080/api/updateStudent/${id}`, student);
   },
 
   deleteStudent(id) {
-    return axios.delete(`http://localhost:8080/api/updateStudent/${id}`);
+    return axiosClient.delete(`http://localhost:8080/api/deleteStudent/${id}`);
   },
 
   //Classroom CRUD
   findAllClassrooms() {
-    return axios.get('http://localhost:8080/api/classrooms'); // Ajusta la URL según tu backend
+    return axiosClient.get('http://localhost:8080/api/classrooms');
   },
 
-  findClassroomId(id){
-    return axios.get('http://localhost:8080/api/classrooms/${id}')
+  findClassroomById(id){
+    return axiosClient.get(`http://localhost:8080/api/classrooms/${id}`)
   },
 
   createClassroom(classroom) {
-    return axios.post('http://localhost:8080/api/createClassroom', student);
+    return axiosClient.post('http://localhost:8080/api/createClassroom', classroom);
   },
 
   updateClassroom(id, classroom) {
-    return axios.put(`http://localhost:8080/api/updateClassroom/${id}`, student);
+    return axiosClient.put(`http://localhost:8080/api/updateClassroom/${id}`, classroom);
   },
 
   deleteClassroom(id) {
-    return axios.delete(`http://localhost:8080/api/updateClassroom/${id}`);
-  }
+    return axiosClient.delete(`http://localhost:8080/api/deleteClassroom/${id}`);
+  },
 
   //Specific API
+  assignStudentToClassroom(studentId,classroomId) {
+    const params = new URLSearchParams();
+    params.append('studentId', studentId);
+    params.append('classroomId', classroomId);
+    return axiosClient.post(`http://localhost:8080/api/assignments`,params);
+  },
+
+  getPercentOccupiedInClassroom(id){
+    return axiosClient.get(`http://localhost:8080/api/classroom/${id}/occupancy`);
+  },
+
+  getStudentsByClassroom(id){
+    return axiosClient.get(`http://localhost:8080/api/classroom/${id}/students`);
+  },
+
+  getStudentsBySex(sex){
+    return axiosClient.get(`http://localhost:8080/api/students/sex/${sex}`);
+  },
+
+  getAverageSexByClassroom(id){
+    return axiosClient.get(`http://localhost:8080/api/classroom/${id}/averageStudentPerSex`);
+  },
+
+  getClassroomsByStudent(id){
+    return axiosClient.get(`http://localhost:8080/api/students/${id}/classrooms`);
+  }
+
+  
 }

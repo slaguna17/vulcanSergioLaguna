@@ -13,7 +13,7 @@ import java.util.Set;
 @Table(name = "classroom")
 public class Classroom{
         @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
+//        @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Integer id;
         @NotEmpty
         private String name;
@@ -23,6 +23,15 @@ public class Classroom{
 
         @ManyToMany(mappedBy = "classrooms")
         private Set<Student> students = new HashSet<>();
+
+        public Classroom() {
+        }
+
+        public Classroom(Integer id, String name, Integer max_capacity) {
+                this.id = id;
+                this.name = name;
+                this.max_capacity = max_capacity;
+        }
 
         //Getters and Setters
         public Integer getId() {
